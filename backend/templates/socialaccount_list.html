@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Socialaccounts | NexusSocial{% endblock %}
+{% block page_title %}Socialaccounts{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search socialaccounts...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Platform</option>
+      <option value="facebook" {% if status_filter == 'facebook' %}selected{% endif %}>Facebook</option>
+      <option value="instagram" {% if status_filter == 'instagram' %}selected{% endif %}>Instagram</option>
+      <option value="twitter" {% if status_filter == 'twitter' %}selected{% endif %}>Twitter</option>
+      <option value="linkedin" {% if status_filter == 'linkedin' %}selected{% endif %}>LinkedIn</option>
+      <option value="youtube" {% if status_filter == 'youtube' %}selected{% endif %}>YouTube</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/socialaccounts/create/" class="btn btn-primary">+ New SocialAccount</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Platform</th><th>Username</th><th>Followers</th><th>Status</th><th>Profile Url</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/socialaccounts/{{ r.pk }}/edit/"><strong>{{ r.platform }}</strong></a></td>
+        <td>{{ r.username|default:"-" }}</td>
+        <td>{{ r.followers|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_status_display }}</span></td>
+        <td>{{ r.profile_url|default:"-" }}</td>
+        <td class="actions">
+          <a href="/socialaccounts/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/socialaccounts/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No socialaccounts found.</p>
+    <a href="/socialaccounts/create/" class="btn btn-primary" style="margin-top:1rem">Create SocialAccount</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
