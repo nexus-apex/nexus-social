@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} SocialAccount | NexusSocial{% endblock %}
+{% block page_title %}{% if editing %}Edit SocialAccount{% else %}New SocialAccount{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Platform</label>
+        <select name="platform">
+          <option value="facebook" {% if record.platform == 'facebook' %}selected{% endif %}>Facebook</option>
+          <option value="instagram" {% if record.platform == 'instagram' %}selected{% endif %}>Instagram</option>
+          <option value="twitter" {% if record.platform == 'twitter' %}selected{% endif %}>Twitter</option>
+          <option value="linkedin" {% if record.platform == 'linkedin' %}selected{% endif %}>LinkedIn</option>
+          <option value="youtube" {% if record.platform == 'youtube' %}selected{% endif %}>YouTube</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" value="{{ record.username|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Followers</label>
+        <input type="number" name="followers" value="{{ record.followers|default:'0' }}">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="connected" {% if record.status == 'connected' %}selected{% endif %}>Connected</option>
+          <option value="disconnected" {% if record.status == 'disconnected' %}selected{% endif %}>Disconnected</option>
+          <option value="paused" {% if record.status == 'paused' %}selected{% endif %}>Paused</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Profile Url</label>
+        <input type="url" name="profile_url" value="{{ record.profile_url|default:'' }}">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} SocialAccount</button>
+      <a href="/socialaccounts/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
