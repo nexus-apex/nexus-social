@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Analyticses | NexusSocial{% endblock %}
+{% block page_title %}Analyticses{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search analyticses...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Period</option>
+      <option value="daily" {% if status_filter == 'daily' %}selected{% endif %}>Daily</option>
+      <option value="weekly" {% if status_filter == 'weekly' %}selected{% endif %}>Weekly</option>
+      <option value="monthly" {% if status_filter == 'monthly' %}selected{% endif %}>Monthly</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/analyticses/create/" class="btn btn-primary">+ New Analytics</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Platform</th><th>Metric</th><th>Period</th><th>Value</th><th>Change Percent</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/analyticses/{{ r.pk }}/edit/"><strong>{{ r.platform }}</strong></a></td>
+        <td>{{ r.metric|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_period_display }}</span></td>
+        <td>{{ r.value|floatformat:2 }}</td>
+        <td>{{ r.change_percent|floatformat:2 }}</td>
+        <td class="actions">
+          <a href="/analyticses/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/analyticses/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No analyticses found.</p>
+    <a href="/analyticses/create/" class="btn btn-primary" style="margin-top:1rem">Create Analytics</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
